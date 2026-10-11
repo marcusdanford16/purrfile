@@ -1,131 +1,131 @@
-<!--
-  This is your project's front page. Replace every placeholder below.
-  It is the first thing your instructor and any future employer will read, and
-  the live link in it is how your project gets opened for grading.
+# PurrFile
 
-  New here? Read START-HERE.md first. Delete this comment when you are done.
--->
+A Flutter app that gives cat owners one place to manage their cats' profiles,
+health records, reminders, and (as a stretch feature) an AI Health Assistant.
+Built for Holy Angel University's Applications Development and Emerging
+Technologies course (6ADET).
 
-# App Name
+> **The Supabase database already exists — do not recreate it.** This project
+> connects to an existing Supabase project (`hzpixswzwktmhwfchjtr`) and its
+> four tables: `cats`, `health_records`, `reminders`, `ai_conversations`. Never
+> run `DROP TABLE` / `CREATE TABLE` / `ALTER TABLE` against it from this repo.
+> The only schema change this repo makes is optional RLS policies, applied
+> manually — see [Supabase setup](#supabase-setup).
 
-> One sentence: what this app does, and who it is for.
+## Features
 
-**Live demo:** https://YOURUSERNAME.github.io/YOUR-REPO/ <!-- GitHub Pages is set up already; replace if you host elsewhere -->
-**Demo video:** `docs/demo.mp4` (link it here once it exists)
-**Course:** Applications Development and Emerging Technologies (6ADET), Holy Angel University
-**Author:** Your Name
+- **Auth** — real Supabase Auth (email/password) for sign-up, login, and
+  logout. No custom or fake auth.
+- **Dashboard** — every registered cat, loaded live from `cats`, with
+  shortcuts into that cat's Timeline, Reminders, AI Assistant, and Profile.
+- **Cat Profile** — full CRUD (add/view/edit/delete) backed by `cats`.
+- **Health Timeline** — view/add/edit/delete records backed by
+  `health_records`, filterable by type, grouped by year.
+- **Reminders & Notifications** — add/edit/delete backed by `reminders`, with
+  Upcoming/History tabs and upcoming/completed/overdue status.
+- **AI Health Assistant** (stretch) — a chat scoped to one cat, backed by
+  `ai_conversations`. Calls a Supabase Edge Function that talks to an AI
+  provider; if the function isn't deployed or reachable, the assistant
+  degrades to a deterministic mock so the screen still works for a demo.
 
-This repository lives in the author's own GitHub account and is public on
-purpose. There is no `student.json` here and there should not be one: see
-`docs/06-security-and-privacy.md` for what a public repo means for secrets and
-personal data.
+## Tech stack
 
----
+- Flutter (Material 3), targeting mobile, desktop, and Flutter Web
+- `supabase_flutter` for Auth + Postgres access
+- `google_fonts`, `intl`, `device_preview`, `flutter_dotenv`
 
-## Screenshots
+## Project structure
 
-Put two or three real screenshots at phone size in `docs/assets/`, then replace
-this paragraph with them:
-
-```markdown
-| Home | Detail | Add |
-| --- | --- | --- |
-| ![Home](docs/assets/screen-home.png) | ![Detail](docs/assets/screen-detail.png) | ![Add](docs/assets/screen-add.png) |
+```
+lib/
+├── main.dart, app.dart
+├── models/        Cat, HealthRecord, Reminder, AiConversation
+├── services/       Supabase bootstrap + one service per table
+├── screens/        auth/ dashboard/ timeline/ reminders/ ai/ profile/
+├── widgets/        CatCard, HealthRecordTile, ReminderTile, PrimaryButton,
+│                    FilterChipBar, StatusBadge, ChatBubble, PurrBottomNav
+├── theme/          app_theme.dart (ColorScheme + TextTheme from the proposal)
+└── utils/          app_spacing.dart, validators.dart
+supabase/
+└── rls_policies.sql   Optional RLS repair script — run manually
+test/                unit tests (validators, model parsing)
 ```
 
-A repo without screenshots reads as abandoned, whatever the code says.
-
-## What it does
-
-Three to five bullets. What can a user actually do?
-
-- ...
-- ...
-- ...
-
-## Built with
-
-| | |
-| --- | --- |
-| Framework | Flutter (Dart) |
-| State | `setState` / provider / riverpod (say which) |
-| Storage | shared_preferences / Hive / Drift / Firebase / Supabase / other |
-| Other packages | list the ones that matter, with a word on why |
-
-## Running it yourself
+## Flutter setup
 
 ```bash
 flutter pub get
-cp .env.example .env      # only if your app needs keys, see below
-flutter run -d web-server --web-port 8080
 ```
 
-Then open http://localhost:8080. Requires Flutter (run `flutter --version` and
-put yours here).
+## Supabase setup
 
-### Environment variables
+1. Copy the environment template and keep the real file out of git:
+   ```bash
+   cp .env.example .env
+   ```
+   `.env` already contains this project's publishable key for local dev —
+   swap in your own project's values if you're pointing at a different
+   Supabase instance.
+2. **Do not recreate the schema.** The four tables already exist with the
+   columns documented in the proposal.
+3. Before writing any CRUD code, verify RLS in the Supabase dashboard
+   (Authentication → Policies) for `cats`, `health_records`, `reminders`, and
+   `ai_conversations`. If policies are missing or incorrect, review and run
+   [`supabase/rls_policies.sql`](supabase/rls_policies.sql) in the SQL editor.
+   It only adds/repairs policies — it never touches table structure or data.
+4. (Optional, for the AI Assistant) Deploy an Edge Function named
+   `ai-health-assistant` that accepts `{ catName, breed, question,
+   recentRecords }` and returns `{ answer }`. Set the AI provider's API key
+   as an Edge Function secret (`supabase secrets set AI_API_KEY=...`) —
+   never in the Flutter client. Without this function deployed, the AI
+   Assistant screen still works using a built-in mock responder.
+5. To enable cat profile photos, run the complete
+  [`supabase/rls_policies.sql`](supabase/rls_policies.sql) script. It creates
+  the public `cat-photos` Storage bucket and only allows signed-in users to
+  upload into their own user-id folder. The app stores the resulting public
+  URL in the existing `cats.photo` column.
 
-This project reads its configuration from a `.env` file that is **not** in the
-repository. Copy `.env.example`, fill in your own values, and never commit the
-result.
+## Environment / configuration
 
-| Variable | What it is | Where to get one |
-| --- | --- | --- |
-| `EXAMPLE_API_KEY` | ... | ... |
+Supabase credentials are read from `.env` via `flutter_dotenv` at startup,
+falling back to the values in `.env.example` only so a fresh checkout can
+still run locally. `.env` is git-ignored. In CI/deployment, set
+`SUPABASE_URL` / `SUPABASE_PUBLISHABLE_KEY` as repository or hosting secrets
+instead of committing a file.
 
-## Privacy and secrets
+## Running the app
 
-Required section. Two or three honest sentences:
+```bash
+flutter run                 # a connected device or emulator
+flutter run -d web-server   # Flutter Web (device_preview wrapper stays on
+                             # in debug builds; see main.dart)
+```
 
-- What personal data this app stores, if any, and where it goes.
-- Where the secrets live (`.env` locally, repository secrets in the deploy
-  workflow) and what protects the data on the service side (Firestore rules,
-  Supabase RLS, or "nothing leaves the device").
-- Confirm that all sample data, screenshots and the video contain **no real
-  personal information**.
+## Running tests
 
-## Project documentation
+```bash
+flutter analyze
+flutter test
+```
 
-| Document | |
-| --- | --- |
-| [Proposal](docs/01-proposal.md) | the problem, the users, the scope |
-| [Mockup and wireframes](docs/02-mockup.md) | what it looks like, and the screen flow |
-| [Design system](docs/03-design-system.md) | colors, type, spacing, components |
-| [Weekly reports](docs/04-weekly-reports.md) | what happened each week |
-| [Demo video](docs/05-demo-video.md) | the recording and what it shows |
-| [Start here](START-HERE.md) | how this repo works (delete once you have read it) |
-| [Security and privacy](docs/06-security-and-privacy.md) | the checklist, filled in |
+`test/validators_test.dart` and `test/models_test.dart` cover form
+validation and model parsing (including malformed/partial rows) without
+touching the network.
 
-## Status and what is next
+## AI configuration
 
-Be honest. What works, what is half done, what you would build next. An honest
-"known issues" section reads better than a claim the reader disproves in thirty
-seconds.
+See [Supabase setup](#supabase-setup) step 4. The chat UI, conversation
+history, and Supabase persistence work identically whether the Edge Function
+is deployed or not — only the source of the answer text changes.
 
-## Credits
+## Known platform limitations
 
-- Packages: see `pubspec.yaml`
-- Assets, icons, 3D models, sounds: name the author and the licence for each
-- People who helped, and how
-
-## AI use
-
-If you used AI while building this, say so here. Honest disclosure is the
-standard in this course and increasingly outside it, and reporting heavy use
-accurately costs you nothing.
-
-This section is the last 10 points of the finals badge, and it wants three
-things:
-
-![Built with AI assistance](https://img.shields.io/badge/built%20with-AI%20assistance-0b5fff)
-
-- the badge above, or one you like better
-- a line naming which assistant you used and how much of the work it touched
-- a link to [AI-USAGE.md](AI-USAGE.md), where the full account lives
-
-Keep the detail in `AI-USAGE.md` rather than here. This section is the summary a
-visitor reads; that file is the record the badge is graded from.
-
-## Licence
-
-MIT, see [LICENSE](LICENSE). Change it if you want different terms.
+- **Push notifications**: implemented as an in-app "Enable" affordance;
+  actual OS-level push requires `flutter_local_notifications`/web push setup
+  that's out of scope for the MVP. Reminders are always visible in-app
+  (Upcoming/History) regardless of notification permission state.
+- **Flutter Web**: every screen is reachable via `flutter run -d web-server`.
+  Anything that would need real device hardware degrades gracefully instead
+  of crashing.
+- **AI Health Assistant**: stretch feature. Falls back to a mock responder
+  when the Edge Function isn't deployed, so the demo never breaks.

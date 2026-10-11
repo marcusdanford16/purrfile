@@ -5,19 +5,13 @@ mockup shows what it looks like.
 
 ## Mockup
 
-Put your mockup images or PDF in `assets/` and embed them here, one heading per
-screen.
+![PurrFile Cat Health App Showcase](../assets/PurrFile%20Cat%20Health%20App%20Showcase.png)
 
-_(Embed your mockup here once it is in `assets/`.)_
 
 ## Wireframes
 
-Your earlier box-and-label sketches and the screen flow: which screen opens
-first, and how a user moves between them. Photos of paper are fine.
-
-_(Embed your flow diagram and sketches here once they are in `assets/`.)_
+![PurrFile screen flow wireframe](../assets/wireframe.png)
 
 ## Screens
 
-One short section per screen: what is on it, what the user does, and where each
-action goes.
+![PurrFile Cat Health App Showcase](../assets/PurrFile%20Cat%20Health%20App%20Showcase.png)

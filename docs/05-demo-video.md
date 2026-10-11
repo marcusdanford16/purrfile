@@ -1,38 +1,41 @@
 # Demo video
 
-**File:** `demo.mp4` in this folder, or the hosted link (see below)
-**Length:** aim for 3 to 5 minutes
-**Recorded on:** the device you used
+**File:** hosted link, not committed to the repo because of its size:
+https://www.google.com/url?q=https://drive.google.com/file/d/1gvlOJL-RpHr0xEGarlyFWRZ1KfFun9LG/view?usp%3Ddrivesdk&source=gmail&ust=1791214842057000&usg=AOvVaw0Jva2OySwx-9Dz-UYEBEHo
+
+**Length:** about 6 minutes
+**Recorded on:** Windows laptop
 
 ## What it shows
 
-A short list, in order, so a viewer can skip to what they need:
+- 0:00 Intro: what PurrFile is, and the login screen
+- 0:30 The problem and who the app is for (cat owners)
+- 1:15 Sign in and the Home dashboard with my cats
+- 1:45 Adding a new cat with a photo
+- 2:15 Health Timeline: filters, and adding a health record
+- 3:00 Reminders: add, mark as done, and the History tab
+- 3:40 AI Health Assistant and its vet disclaimer
+- 4:10 Cat profile and summary
+- 4:30 How it works: Supabase tables, security rules, and the design system
+- 5:15 Challenges and what I learned (the reminder boolean bug)
+- 5:45 Outro
 
-- 0:00 what the app is and who it is for
-- 0:20 ...
-- 1:10 ...
+**Main user journey, end to end:** 1:15 to 4:30 (login, add a cat, record a
+health event, set a reminder, ask the assistant, view the profile).
+**Anything that only works on a real device:** [FILL IN: for example "Nothing.
+The app does not use GPS or sensors. The photo picker works in the browser."]
+**What I am proudest of:** [FILL IN: for example "the Health Timeline" at 2:15]
 
-Cover, in this order: the main user journey end to end, anything that only works
-on a real device (camera, GPS, sensors), and the thing you are proudest of.
+## Where the video is
 
-## Getting it into the repo
+The video is hosted on Google Drive, with sharing set to "Anyone with the link
+can view". I did not commit it to the repo: GitHub blocks files over 100 MB and
+git keeps a committed file forever.
 
-GitHub **blocks any file over 100 MB** and warns over 50 MB, so compress before
-you commit:
+## Before I recorded
 
-```bash
-ffmpeg -i raw.mp4 -vcodec libx264 -crf 28 -preset slow \
-       -vf scale=-2:720 -acodec aac -b:a 96k demo.mp4
-```
-
-Raise `-crf` (28 to 32) or drop to `-2:480` if it is still too large. If it still
-does not fit, attach it to a **GitHub Release** or upload it unlisted and link it
-here. Never commit the raw capture: git keeps it forever even after you delete
-it.
-
-## Before you record
-
-- Real data off the screen: no classmates' names, numbers, faces or messages.
-- Notifications off.
-- Sensible sample data, not "asdf".
-- One unbroken take per feature. Say what you are doing while you do it.
+- [ ] Real data off the screen: no classmates' names, numbers, faces or messages
+- [ ] Notifications off
+- [ ] Sensible sample data, not "asdf"
+- [ ] One unbroken take per feature, saying what I am doing as I do it
+- [ ] No `.env` file, API keys or Supabase keys page shown

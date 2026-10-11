@@ -1,27 +1,28 @@
-// A widget test: it builds your app in memory and checks what is on screen.
-// Run them all with: flutter test
+// This is a basic Flutter widget test.
 //
-// You are not required to write more of these, but a project with a few real
-// tests reads very differently from one with none.
+// To perform an interaction with a widget in your test, use the WidgetTester
+// utility in the flutter_test package. For example, you can send tap and scroll
+// gestures. You can also use WidgetTester to find child widgets in the widget
+// tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/material.dart';
+import 'package:device_preview/device_preview.dart';
+import 'package:flutter/widgets.dart' show Key;
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:final_project/main.dart';
+import 'package:purrfile/app.dart';
+import 'package:purrfile/services/supabase_service.dart';
 
 void main() {
-  testWidgets('home screen shows its title and counts taps', (tester) async {
-    // Build the app. Note we build MyApp directly, not the DevicePreview
-    // wrapper, because a test does not need the phone frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('shows the login screen', (WidgetTester tester) async {
+    await SupabaseService.init();
+    await tester.pumpWidget(
+      DevicePreview(
+        enabled: false,
+        builder: (_) => const PurrFileApp(),
+      ),
+    );
 
-    expect(find.text('It works'), findsOneWidget);
-    expect(find.text('Taps: 0'), findsOneWidget);
-
-    // Tap the button, then let the widget rebuild.
-    await tester.tap(find.byType(FilledButton));
-    await tester.pump();
-
-    expect(find.text('Taps: 1'), findsOneWidget);
+    expect(find.byKey(const Key('purrfile_logo')), findsOneWidget);
+    expect(find.text('Email'), findsOneWidget);
   });
 }
